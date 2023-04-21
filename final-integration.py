@@ -93,7 +93,8 @@ predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]
 
 #Voice Client Vonage 
-VONAGE_APPLICATION_PRIVATE_KEY_PATH="C:\\Users\\GurpreetSingh\\Downloads\\Drawsi Ak\\Drawsi Ak\\private.key"
+# VONAGE_APPLICATION_PRIVATE_KEY_PATH="C:\\Users\\GurpreetSingh\\Desktop\\Projects\\EVO-DDS\\private.key"
+VONAGE_APPLICATION_PRIVATE_KEY_PATH="private.key"
 voiceClient = vonage.Client(application_id="8a15e49d-130d-4bd4-b17b-72f6e9e60058",private_key=VONAGE_APPLICATION_PRIVATE_KEY_PATH,)
 
 #SMS Client Vonage 
