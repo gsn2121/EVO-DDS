@@ -6,11 +6,11 @@ import imutils
 from imutils import face_utils
 from matplotlib import pyplot as plt
 import vlc
-import train as train
+# import train as train
 import sys, webbrowser, datetime
 from pprint import pprint
-# import nexmo
 import vonage
+import os
 
 def yawn(mouth):
     return ((euclideanDist(mouth[2], mouth[10])+euclideanDist(mouth[4], mouth[8]))/(2*euclideanDist(mouth[0], mouth[6])))
@@ -45,7 +45,7 @@ def getFaceDirection(shape, size):
                             [0, focal_length, center[1]],
                             [0, 0, 1]], dtype = "double"
                             )
-    dist_coeffs = np.zeros((4,1)) # Assuming no lens distortion
+    dist_coeffs = np.zeros((4,1)) #Assuming no lens distortion
     (success, rotation_vector, translation_vector) = cv2.solvePnP(model_points, image_points, camera_matrix, dist_coeffs, flags=cv2.SOLVEPNP_ITERATIVE)
     return(translation_vector[1][0])
 
@@ -61,16 +61,20 @@ def writeEyes(a, b, img):
     y2 = min(a[4][1], a[5][1])
     x1 = a[0][0]
     x2 = a[3][0]
-    cv2.imwrite('left-eye.jpg', img[y1:y2, x1:x2])
+    cv2.imwrite(appDataLoc + 'left-eye.jpg', img[y1:y2, x1:x2])
     y1 = max(b[1][1], b[2][1])
     y2 = min(b[4][1], b[5][1])
     x1 = b[0][0]
     x2 = b[3][0]
-    cv2.imwrite('right-eye.jpg', img[y1:y2, x1:x2])
-# open_avg = train.getAvg()
-# close_avg = train.getAvg()
+    cv2.imwrite( appDataLoc + 'right-eye.jpg', img[y1:y2, x1:x2])
 
-alertFocus = vlc.MediaPlayer('focus.mp3')  #Focus alertFocusFocus
+
+pwd = os.path.dirname(__file__)
+appDataLoc =  pwd + '\\app-data\\'
+
+
+
+alertFocus = vlc.MediaPlayer(appDataLoc + 'focus.mp3')  #Focus alertFocusFocus
 
 frame_thresh_1 = 15
 frame_thresh_2 = 10
@@ -87,14 +91,14 @@ map_flag = 1
 capture = cv2.VideoCapture(0)
 avgEAR = 0
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor(appDataLoc + 'shape_predictor_68_face_landmarks.dat')
 (leStart, leEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
 (reStart, reEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
 (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]
 
 #Voice Client Vonage 
 # VONAGE_APPLICATION_PRIVATE_KEY_PATH="C:\\Users\\GurpreetSingh\\Desktop\\Projects\\EVO-DDS\\private.key"
-VONAGE_APPLICATION_PRIVATE_KEY_PATH="private.key"
+VONAGE_APPLICATION_PRIVATE_KEY_PATH= appDataLoc + 'private.key'
 voiceClient = vonage.Client(application_id="8a15e49d-130d-4bd4-b17b-72f6e9e60058",private_key=VONAGE_APPLICATION_PRIVATE_KEY_PATH,)
 
 #SMS Client Vonage 
@@ -223,11 +227,11 @@ while(True):
             map_flag=1
             flag=0
 
-        if(map_counter>=3):
+        if(map_counter>=7):
             map_flag=1
             map_counter=0
 
-            vlc.MediaPlayer('take_a_break.mp3').play()
+            vlc.MediaPlayer( appDataLoc + 'take_a_break.mp3').play()
             # webbrowser.open("https://www.google.com/maps/search/hotels+or+motels+near+me")
             
             # Sending Voice Call when it is more than 3
